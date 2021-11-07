@@ -101,7 +101,6 @@ class Search extends React.Component {
                 }
             }
 
-            console.log(users);
             setData("users", users);
             this.sortUsers();
             this.setState({
@@ -184,6 +183,7 @@ class Search extends React.Component {
             oldSort = sort;
             this.sortUsers();
         }
+        let yearLine = false;
 
         return <div className="search-page">
             <NavigationBar
@@ -205,23 +205,31 @@ class Search extends React.Component {
                 />)
                     :
                     <>
-                        {this.users.map((item) => <>
-                            {item.nextYear && <Year>{nowDate.getFullYear()+1}</Year>}
-                            <Link onClick={() => {
-                                setData("activeUser", item);
-                            }} to="/profile">
-                                <Cell
-                                    key={item.id}
-                                    avatarSource={item.avatarUrl}
-                                    afterText={item.userTag}
-                                    description={tabs.find(tab => tab.key === item.department).title}
-                                    loading={false}
-                                    after={sort === 1 && item.birthday.getDate() + " " + months[item.birthday.getMonth()]}
-                                >
-                                    {item.firstName + " " + item.lastName}
-                                </Cell>
-                            </Link>
-                        </>)}
+                        
+                        {this.users.map((item) => {
+                            let line = false;
+                            if(sort === 1 && !yearLine && item.upcomingBirthday.getFullYear() !== nowDate.getFullYear()) {
+                                yearLine = true;
+                                line = true;
+                            }
+                            return (<>
+                                {line && <Year>{nowDate.getFullYear()+1}</Year>}
+                                <Link onClick={() => {
+                                    setData("activeUser", item);
+                                }} to="/profile">
+                                    <Cell
+                                        key={item.id}
+                                        avatarSource={item.avatarUrl}
+                                        afterText={item.userTag}
+                                        description={tabs.find(tab => tab.key === item.department).title}
+                                        loading={false}
+                                        after={sort === 1 && item.birthday.getDate() + " " + months[item.birthday.getMonth()]}
+                                    >
+                                        {item.firstName + " " + item.lastName}
+                                    </Cell>
+                                </Link>
+                            </>)
+                        })}
                         {this.users.length === 0 && <Placeholder
                             header="Мы никого не нашли"
                             icon={notFound}
