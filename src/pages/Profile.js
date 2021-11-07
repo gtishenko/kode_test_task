@@ -60,7 +60,7 @@ class Profile extends React.Component {
         console.log(activeUser);
         let birthdayString = null, age = null;
         if(activeUser) {
-            let birthday = new Date(activeUser.birthday);
+            let birthday = activeUser.birthday;
             age = this.getAge(birthday);
             age += this.declOfNum(age, [" год", " года", " лет"]);
 
@@ -97,11 +97,13 @@ class Profile extends React.Component {
                     {birthdayString}
                 </SimpleCell>}
 
-                <SimpleCell
-                    before={<img alt="phone" src={phone} width={24} />}
-                >
-                    {activeUser.phone}
-                </SimpleCell>
+                <a href={"tel:+" + activeUser.phone}>
+                    <SimpleCell
+                        before={<img alt="phone" src={phone} width={24} />}
+                    >
+                        {activeUser.phone}
+                    </SimpleCell>
+                </a>
             </> : <Placeholder
                 header="Вы не выбрали пользователя"
                 icon={UFO}

@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 class Cell extends PureComponent {
 
     render() {
-        const { loading, avatarSource, description, after, children } = this.props;
+        const { loading, avatarSource, description, afterText, children, after } = this.props;
 
         if(loading) {
             return <div className="cell-loading">
@@ -23,19 +23,22 @@ class Cell extends PureComponent {
                     <div className="left-content">
                         <div className="avatar" style={avatarSource ? { backgroundImage: "url(" + avatarSource + ")" } : {}} />
                     </div>
-                    <div className="center-content" >
+                    <div className="center-content">
                         <div className="title-block">
                             <div className="title">
                                 {children}
                             </div>
-                            <div className="after">
-                                {after}
+                            <div className="afterText">
+                                {afterText}
                             </div>
                         </div>
                         {description && <div className="description">
                             {description}
                         </div>}
                     </div>
+                    {after && <div className="right-content">
+                        {after}
+                    </div>}
                 </div>
             </div>;
         }

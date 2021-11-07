@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react';
+import sort from '../images/sort.svg';
+import search from '../images/search.svg';
 
 class NavigationBar extends PureComponent {
 
@@ -13,7 +15,11 @@ class NavigationBar extends PureComponent {
             
             {status === "default" ? <>
                 <h1>{header}</h1>
-                <input disabled={disabledInput} onChange={this.props.onSearchChange} placeholder={searchPlaceholder} value={searchValue} />
+                <div className="input-box">
+                    <img className="search" src={search} alt="search" />
+                    <input disabled={disabledInput} onChange={this.props.onSearchChange} placeholder={searchPlaceholder} value={searchValue} />
+                    <img className="sort" src={sort} alt="sort" onClick={() => this.props.onClickSort && this.props.onClickSort()} />
+                </div>
             </> : <div className={status + " background"}>
                 <h1>{header}</h1>
                 <div className="description">

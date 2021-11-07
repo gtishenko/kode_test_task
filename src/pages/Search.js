@@ -10,6 +10,27 @@ import UFO from '../images/UFO.png';
 import notFound from '../images/notFound.png';
 import { Link } from 'react-router-dom';
 import { tabs } from '../info';
+import Alert from '../components/Alert';
+import Year from '../components/Year';
+
+const months = [
+    'янв',
+    'фев',
+    'мар',
+    'апр',
+    'мая',
+    'июн',
+    'июл',
+    'авг',
+    'сен',
+    'окт',
+    'ноя',
+    'дек',
+];
+
+let oldSort = 0;
+
+let nowDate = new Date();
 
 class Search extends React.Component {
 
@@ -20,19 +41,23 @@ class Search extends React.Component {
             activeTab: "all",
             loading: this.props.users.length === 0,
             status: "default",
-            error: false
+            error: false,
+            sortSettingsOpened: false
         };
 
         this.updateStatus = this.updateStatus.bind(this);
     }
 
     componentWillUnmount() {
+        const { setData } = this.props;
         window.removeEventListener("online", this.updateStatus);
         window.removeEventListener("offline", this.updateStatus);
+        setData("scrollPosition", window.scrollY);
     }
 
     componentDidMount() {
-        const { users } = this.props;
+        const { users, scrollPosition } = this.props;
+        window.scrollTo(0, scrollPosition);
         if (users.length === 0) {
             this.getUsers();
         }
@@ -42,13 +67,13 @@ class Search extends React.Component {
     }
 
     updateStatus() {
-        if(navigator.onLine && this.state.status === "error") {
+        if (navigator.onLine && this.state.status === "error") {
             this.setState({
                 status: "loading",
                 loading: true
             });
             this.getUsers();
-        } else if(!navigator.onLine && (this.state.status === "default" || this.state.status === "loading")) {
+        } else if (!navigator.onLine && (this.state.status === "default" || this.state.status === "loading")) {
             this.setState({
                 status: "error"
             });
@@ -65,8 +90,20 @@ class Search extends React.Component {
             },
         })
         .then(data => {
-            console.log(data.data);
-            setData("users", data.data);
+            let users = data.data.items;
+
+            for (let i = 0; i < users.length; i++) {
+                try {
+                    users[i].birthday = new Date(users[i].birthday);
+                } catch (error) {
+                    console.log(error);
+                    users[i].birthday = null;
+                }
+            }
+
+            console.log(users);
+            setData("users", users);
+            this.sortUsers();
             this.setState({
                 loading: false,
                 status: "default"
@@ -81,17 +118,72 @@ class Search extends React.Component {
     }
 
     get users() {
-        const { users, search } = this.props;
+        const { users, search, sort } = this.props;
         const searchText = search.toLowerCase().trim();
-        return users.items.filter(({ firstName, lastName, userTag, department }) =>
-            (this.state.activeTab === "all" || department === this.state.activeTab) &&
-            ((firstName + " " + lastName).toLowerCase().indexOf(searchText) > -1 ||
-            (lastName + " " + firstName).toLowerCase().indexOf(searchText) > -1 ||
-            userTag.toLowerCase().indexOf(searchText) > -1));
+        if (sort === 0) { //if sort by alphabet
+            return users
+            .filter(({ firstName, lastName, userTag, department }) =>
+                (this.state.activeTab === "all" || department === this.state.activeTab) &&
+                ((firstName + " " + lastName).toLowerCase().indexOf(searchText) > -1 ||
+                (lastName + " " + firstName).toLowerCase().indexOf(searchText) > -1 ||
+                userTag.toLowerCase().indexOf(searchText) > -1));
+        } else {// if sort by birthday
+            return users
+            .filter(({ firstName, lastName, userTag, department }) =>
+                (this.state.activeTab === "all" || department === this.state.activeTab) &&
+                ((firstName + " " + lastName).toLowerCase().indexOf(searchText) > -1 ||
+                    (lastName + " " + firstName).toLowerCase().indexOf(searchText) > -1 ||
+                    userTag.toLowerCase().indexOf(searchText) > -1));
+        }
+    }
+
+    sortUsers() {
+        const { setData, users, sort } = this.props;
+        let sortedUsers;
+        if(sort === 0) {
+            sortedUsers = users.sort(function (a, b) {
+                if (a.firstName < b.firstName) { return -1; }
+                if (a.firstName > b.firstName) { return 1; }
+                return 0;
+            });
+        } else if(sort === 1) {
+            for (let i = 0; i < users.length; i++) {
+                let upcomingBirthday = users[i].birthday;
+
+                if(upcomingBirthday.getMonth() < nowDate.getMonth()) upcomingBirthday.setYear(nowDate.getFullYear()+1);
+                else if(upcomingBirthday.getMonth() === nowDate.getMonth() && upcomingBirthday.getDate() <= nowDate.getDate()) upcomingBirthday.setYear(nowDate.getFullYear()+1);
+                else if(upcomingBirthday.getMonth() === nowDate.getMonth() && upcomingBirthday.getDate() > nowDate.getDate()) upcomingBirthday.setYear(nowDate.getFullYear());
+                else if(upcomingBirthday.getMonth() > nowDate.getMonth()) upcomingBirthday.setYear(nowDate.getFullYear());
+
+                users[i].upcomingBirthday = upcomingBirthday;
+            }
+
+            sortedUsers = users.sort(function(a, b){
+                let firstDifference = a.upcomingBirthday - nowDate;
+                let secondDifference = b.upcomingBirthday - nowDate;
+
+                return firstDifference - secondDifference;
+            });
+
+            for (let i = 0; i < sortedUsers.length; i++) {
+                if(sortedUsers[i].upcomingBirthday.getFullYear() === nowDate.getFullYear()+1) {
+                    console.log(sortedUsers[i]);
+                    sortedUsers[i].nextYear = true;
+                    break;
+                }
+            }
+
+            console.log(sortedUsers);
+        }
+        setData("users", sortedUsers);
     }
 
     render() {
-        const { setData, search } = this.props;
+        const { setData, search, sort } = this.props;
+        if(sort !== oldSort) {
+            oldSort = sort;
+            this.sortUsers();
+        }
 
         return <div className="search-page">
             <NavigationBar
@@ -104,34 +196,39 @@ class Search extends React.Component {
                 onSearchChange={(e) => setData("search", e.target.value)}
                 searchValue={search}
                 disabledInput={this.state.loading || this.state.error}
+                onClickSort={() => this.setState({ sortSettingsOpened: true })}
             />
 
             {!this.state.error && <>
                 {this.state.loading ? [...Array(15)].map(() => <Cell
                     loading={true}
                 />)
-                :
-                <>
-                    {this.users.map((item) => <Link onClick={() => {
-                            setData("activeUser", item);
-                        }} to="/profile">
-                        <Cell
-                            key={item.id}
-                            avatarSource={item.avatarUrl}
-                            after={item.userTag}
-                            description={tabs.find(tab => tab.key === item.department).title}
-                            loading={false}
+                    :
+                    <>
+                        {this.users.map((item) => <>
+                            {item.nextYear && <Year>{nowDate.getFullYear()+1}</Year>}
+                            <Link onClick={() => {
+                                setData("activeUser", item);
+                            }} to="/profile">
+                                <Cell
+                                    key={item.id}
+                                    avatarSource={item.avatarUrl}
+                                    afterText={item.userTag}
+                                    description={tabs.find(tab => tab.key === item.department).title}
+                                    loading={false}
+                                    after={sort === 1 && item.birthday.getDate() + " " + months[item.birthday.getMonth()]}
+                                >
+                                    {item.firstName + " " + item.lastName}
+                                </Cell>
+                            </Link>
+                        </>)}
+                        {this.users.length === 0 && <Placeholder
+                            header="Мы никого не нашли"
+                            icon={notFound}
                         >
-                            {item.firstName + " " + item.lastName}
-                        </Cell>
-                    </Link>)}
-                    {this.users.length === 0 && <Placeholder
-                        header="Мы никого не нашли"
-                        icon={notFound}
-                    >
-                        Попробуй скорректировать запрос
+                            Попробуй скорректировать запрос
                     </Placeholder>}
-                </>}
+                    </>}
             </>}
 
             {this.state.error && <Placeholder
@@ -147,6 +244,18 @@ class Search extends React.Component {
                 Постараемся быстро починить
             </Placeholder>}
 
+            {this.state.sortSettingsOpened && <Alert onClose={() => this.setState({ sortSettingsOpened: false })} closeButtonSide="right" header="Сортировка">
+                <div onClick={() => setData("sort", 0)} className="sort-radio-item">
+                    <input type="radio" id="alphabet" name="sort" value={0} checked={sort === 0} />
+                    <label>По алфавиту</label>
+                </div>
+
+                <div onClick={() => setData("sort", 1)} className="sort-radio-item">
+                    <input type="radio" id="birthday" name="sort" value={1} checked={sort === 1} />
+                    <label>По дню рождения</label>
+                </div>
+            </Alert>}
+
         </div>;
     }
 }
@@ -155,6 +264,8 @@ const mapStateToProps = (state) => {
     return {
         users: state.data.users,
         search: state.data.search,
+        sort: state.data.sort,
+        scrollPosition: state.data.scrollPosition,
     };
 };
 
