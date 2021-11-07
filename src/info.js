@@ -1,0 +1,15 @@
+export const tabs = [
+    { title: "Все", key: "all" },
+    { title: "Android", key: "android" },
+    { title: "IOS", key: "ios" },
+    { title: "Дизайн", key: "design" },
+    { title: "Менеджмент", key: "management" },
+    { title: "QA", key: "qa" },
+    { title: "Бэк-офис", key: "back_office" },
+    { title: "Frontend", key: "frontend" },
+    { title: "HR", key: "hr" },
+    { title: "PR", key: "pr" },
+    { title: "Backend", key: "backend" },
+    { title: "Техподдержка", key: "support" },
+    { title: "Аналитика", key: "analytics" },
+];

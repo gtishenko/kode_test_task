@@ -1,9 +1,10 @@
-function App() {
-  return (
-    <div>
-      Hello, world!
-    </div>
-  );
-}
+import React from 'react';
+import Search from './pages/Search.js';
 
+class App extends React.Component {
+  render() { 
+    return <Search />;
+  }
+}
+ 
 export default App;

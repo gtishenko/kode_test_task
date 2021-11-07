@@ -1,0 +1,309 @@
+/* imports */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* basic reset */
+html {
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+  
+*, *:before, *:after {
+    box-sizing: inherit;
+    font-family: 'Inter', sans-serif;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* components — NavigationBar.js */
+.navigation-bar {
+    border-bottom: #C3C3C6 0.33px solid;
+}
+
+/* .navigation-bar .error.background {
+    background-color: #F44336;
+    color: #FFFFFF;
+} */
+
+.navigation-bar h1 {
+    font-size: 24px;
+    padding: 16px 0 12px 24px;
+    font-weight: 700;
+}
+
+.navigation-bar input {
+    width: calc(100% - 16px * 2);
+    margin: 6px 16px;
+    height: 40px;
+    background-color: #F7F7F8;
+    border: none;
+    border-radius: 16px;
+    padding: 0 10px;
+    caret-color: #6534FF;
+    font-weight: 400;
+}
+
+.navigation-bar input:focus {
+    outline: none;
+}
+
+.navigation-bar input::placeholder {
+    color: #C3C3C6;
+    font-weight: 500;
+}
+
+.navigation-bar .tabs {
+    display: flex;
+    margin: 0 16px;
+    overflow: scroll;
+}
+
+.navigation-bar .tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.navigation-bar .tabs .tab-item {
+    padding: 8px 12px;
+    color: #97979B;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: color .5s, box-shadow .5s;
+    white-space: nowrap;
+}
+
+.navigation-bar .tabs .tab-item.active {
+    color: #050510;
+    font-weight: 600;
+    box-shadow: inset 0px -2px 0px 0px #6534FF;
+}
+
+.separator {
+    background-color: #C3C3C6;
+    width: 100%;
+    height: 0.33px;
+}
+
+/* states */
+.navigation-bar .background.error {
+    background-color: #F44336;
+}
+
+.navigation-bar .background.loading {
+    background-color: #6534FF;
+}
+
+.navigation-bar .background {
+    color: #FFFFFF;
+    transition: .5s;
+}
+
+.navigation-bar .background .description {
+    padding: 20px 0 28px 24px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* components — Cell.js */
+/* common styles */
+.cell .avatar, .cell-loading .avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+}
+
+.cell .center-content, .cell-loading .center-content {
+    display: flex;
+    flex-direction: column;
+    margin-left: 16px;
+}
+
+.cell, .cell-loading {
+    margin: 16px 16px 4px 16px;
+    padding: 4px 8px;
+}
+
+/* not loading state */
+.cell {
+    cursor: pointer;
+}
+
+.cell-inner {
+    display: flex;
+    align-items: center;
+}
+
+.cell .avatar {
+    background-size: cover;
+}
+
+.cell .title-block {
+    display: flex;
+}
+
+.cell .title-block .title {
+    color: #050510;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.cell .title-block .after {
+    color: #97979B;
+    margin-left: 4px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.cell .description {
+    color: #55555C;
+    font-weight: 400;
+    font-size: 13px;
+}
+
+/* cell loading state */
+.cell-loading .avatar, .cell-loading .title, .cell-loading .description {
+    background: linear-gradient(90deg, #F3F3F6 0%, #FAFAFA 100%);
+    border-radius: 50px;
+}
+
+.cell-loading .title {
+    height: 16px;
+    width: 144px;
+}
+.cell-loading .description {
+    width: 80px;
+    height: 12px;
+    margin-top: 6px;
+}
+
+/* components — placeholder.js */
+.placeholder {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.placeholder__inner {
+    padding: 50px 30px;
+    text-align: center;
+}
+
+.placeholder__header {
+    font-weight: 600;
+    font-size: 17px;
+    color: #050510;
+}
+
+.placeholder__text {
+    font-weight: 400;
+    font-size: 16px;
+    color: #97979B;
+    margin-top: 12px;
+}
+
+/* components — SimpleCell.js */
+.simple-cell {
+    display: flex;
+    margin: 8px 16px;
+    padding: 18px 0;
+    align-items: center;
+}
+
+.simple-cell__content {
+    margin-left: 12px;
+}
+
+.simple-cell__after {
+    margin-left: auto;
+}
+
+/* components — Button.js */
+.button {
+    font-weight: 600;
+    font-size: 16px;
+    color: #6534FF;
+    margin-top: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: .5s;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: rgba(101, 52, 255, 0.05);
+}
+
+.button:active {
+    background-color: rgba(101, 52, 255, 0.1);
+}
+
+/* pages — Profile.js */
+.profile .header {
+    height: 280px;
+    background-color: #F7F7F8;
+}
+
+.profile .back-button {
+    /* width: 6.25px; */
+    width: 12px;
+    margin: 28px 0 0 32px;
+    cursor: pointer;
+    position: absolute;
+}
+
+.profile .center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile .avatar {
+    width: 104px;
+    height: 104px;
+    background-size: cover;
+    border-radius: 50%;
+    filter: drop-shadow(0px 1px 5px rgba(22, 30, 52, 0.039)) drop-shadow(0px 8px 12px rgba(22, 30, 52, 0.08));
+    margin-top: 72px;
+}
+
+.profile .title-block {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.profile .title-block .title {
+    color: #050510;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.profile .title-block .after {
+    color: #97979B;
+    margin-left: 4px;
+    font-weight: 400;
+    font-size: 17px;
+}
+
+.profile .description {
+    font-weight: 400;
+    font-size: 13px;
+    margin-top: 12px;
+    color: #55555C;
+}
