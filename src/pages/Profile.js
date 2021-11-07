@@ -57,7 +57,6 @@ class Profile extends React.Component {
 
     render() {
         const { activeUser } = this.props;
-        console.log(activeUser);
         let birthdayString = null, age = null;
         if(activeUser) {
             let birthday = activeUser.birthday;

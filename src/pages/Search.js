@@ -147,7 +147,8 @@ class Search extends React.Component {
             });
         } else if(sort === 1) {
             for (let i = 0; i < users.length; i++) {
-                let upcomingBirthday = users[i].birthday;
+                let user = JSON.parse(JSON.stringify(users[i])); //unlink
+                let upcomingBirthday = new Date(user.birthday);
 
                 if(upcomingBirthday.getMonth() < nowDate.getMonth()) upcomingBirthday.setYear(nowDate.getFullYear()+1);
                 else if(upcomingBirthday.getMonth() === nowDate.getMonth() && upcomingBirthday.getDate() <= nowDate.getDate()) upcomingBirthday.setYear(nowDate.getFullYear()+1);
@@ -203,40 +204,39 @@ class Search extends React.Component {
                 {this.state.loading ? [...Array(15)].map(() => <Cell
                     loading={true}
                 />)
-                    :
-                    <>
-                        
-                        {this.users.map((item) => {
-                            let line = false;
-                            if(sort === 1 && !yearLine && item.upcomingBirthday.getFullYear() !== nowDate.getFullYear()) {
-                                yearLine = true;
-                                line = true;
-                            }
-                            return (<>
-                                {line && <Year>{nowDate.getFullYear()+1}</Year>}
-                                <Link onClick={() => {
-                                    setData("activeUser", item);
-                                }} to="/profile">
-                                    <Cell
-                                        key={item.id}
-                                        avatarSource={item.avatarUrl}
-                                        afterText={item.userTag}
-                                        description={tabs.find(tab => tab.key === item.department).title}
-                                        loading={false}
-                                        after={sort === 1 && item.birthday.getDate() + " " + months[item.birthday.getMonth()]}
-                                    >
-                                        {item.firstName + " " + item.lastName}
-                                    </Cell>
-                                </Link>
-                            </>)
-                        })}
-                        {this.users.length === 0 && <Placeholder
-                            header="Мы никого не нашли"
-                            icon={notFound}
-                        >
-                            Попробуй скорректировать запрос
-                    </Placeholder>}
-                    </>}
+                :
+                <>
+                    {this.users.map((item) => {
+                        let line = false;
+                        if(sort === 1 && !yearLine && item.upcomingBirthday && item.upcomingBirthday.getFullYear() !== nowDate.getFullYear()) {
+                            yearLine = true;
+                            line = true;
+                        }
+                        return (<>
+                            {line && <Year>{nowDate.getFullYear()+1}</Year>}
+                            <Link onClick={() => {
+                                setData("activeUser", item);
+                            }} to="/profile">
+                                <Cell
+                                    key={item.id}
+                                    avatarSource={item.avatarUrl}
+                                    afterText={item.userTag}
+                                    description={tabs.find(tab => tab.key === item.department).title}
+                                    loading={false}
+                                    after={sort === 1 && item.birthday.getDate() + " " + months[item.birthday.getMonth()]}
+                                >
+                                    {item.firstName + " " + item.lastName}
+                                </Cell>
+                            </Link>
+                        </>)
+                    })}
+                    {this.users.length === 0 && <Placeholder
+                        header="Мы никого не нашли"
+                        icon={notFound}
+                    >
+                        Попробуй скорректировать запрос
+                </Placeholder>}
+                </>}
             </>}
 
             {this.state.error && <Placeholder
@@ -253,12 +253,22 @@ class Search extends React.Component {
             </Placeholder>}
 
             {this.state.sortSettingsOpened && <Alert onClose={() => this.setState({ sortSettingsOpened: false })} closeButtonSide="right" header="Сортировка">
-                <div onClick={() => setData("sort", 0)} className="sort-radio-item">
+                <div onClick={() => {
+                    setData("sort", 0);
+                    this.setState({
+                        sortSettingsOpened: false
+                    });
+                }} className="sort-radio-item">
                     <input type="radio" id="alphabet" name="sort" value={0} checked={sort === 0} />
                     <label>По алфавиту</label>
                 </div>
 
-                <div onClick={() => setData("sort", 1)} className="sort-radio-item">
+                <div onClick={() => {
+                    setData("sort", 1);
+                    this.setState({
+                        sortSettingsOpened: false
+                    });
+                }} className="sort-radio-item">
                     <input type="radio" id="birthday" name="sort" value={1} checked={sort === 1} />
                     <label>По дню рождения</label>
                 </div>

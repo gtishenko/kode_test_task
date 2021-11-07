@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import stub from '../images/stub.png';
 
 class Cell extends PureComponent {
 
@@ -21,7 +22,7 @@ class Cell extends PureComponent {
             return <div className="cell">
                 <div className="cell-inner">
                     <div className="left-content">
-                        <div className="avatar" style={avatarSource ? { backgroundImage: "url(" + avatarSource + ")" } : {}} />
+                        <div className="avatar" style={avatarSource ? { backgroundImage: "url(" + avatarSource + "), url(" + stub + ")" } : {}} />
                     </div>
                     <div className="center-content">
                         <div className="title-block">
