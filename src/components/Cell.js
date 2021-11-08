@@ -28,10 +28,11 @@ class Cell extends PureComponent {
                         <div className="title-block">
                             <div className="title">
                                 {children}
+                                <span className="afterText">
+                                    {afterText}
+                                </span>
                             </div>
-                            <div className="afterText">
-                                {afterText}
-                            </div>
+                        
                         </div>
                         {description && <div className="description">
                             {description}

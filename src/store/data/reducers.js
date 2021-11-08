@@ -5,7 +5,8 @@ const initialState = {
     search: "", // search text 
     activeUser: null, // active user on page "Profile"
     sort: 0, // type of sorting users
-    scrollPosition: 0 // Scroll position of a "Search" page
+    scrollPosition: 0, // Scroll position of a "Search" page
+    activeTab: "all" // active tab of a "Search" page
 };
 
 export const dataReducer = (state = initialState, action) => {

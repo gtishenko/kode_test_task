@@ -38,7 +38,6 @@ class Search extends React.Component {
         super(props);
 
         this.state = {
-            activeTab: "all",
             loading: this.props.users.length === 0,
             status: "default",
             error: false,
@@ -123,19 +122,19 @@ class Search extends React.Component {
     }
 
     get users() {
-        const { users, search, sort } = this.props;
+        const { users, search, sort, activeTab } = this.props;
         const searchText = search.toLowerCase().trim();
         if (sort === 0) { //if sort by alphabet
             return users
             .filter(({ firstName, lastName, userTag, department }) =>
-                (this.state.activeTab === "all" || department === this.state.activeTab) &&
+                (activeTab === "all" || department === activeTab) &&
                 ((firstName + " " + lastName).toLowerCase().indexOf(searchText) > -1 ||
                 (lastName + " " + firstName).toLowerCase().indexOf(searchText) > -1 ||
                 userTag.toLowerCase().indexOf(searchText) > -1));
         } else {// if sort by birthday
             return users
             .filter(({ firstName, lastName, userTag, department }) =>
-                (this.state.activeTab === "all" || department === this.state.activeTab) &&
+                (activeTab === "all" || department === activeTab) &&
                 ((firstName + " " + lastName).toLowerCase().indexOf(searchText) > -1 ||
                     (lastName + " " + firstName).toLowerCase().indexOf(searchText) > -1 ||
                     userTag.toLowerCase().indexOf(searchText) > -1));
@@ -178,14 +177,12 @@ class Search extends React.Component {
                     break;
                 }
             }
-
-            console.log(sortedUsers);
         }
         setData("users", sortedUsers);
     }
 
     render() {
-        const { setData, search, sort } = this.props;
+        const { setData, search, sort, activeTab } = this.props;
         if(sort !== oldSort) {
             oldSort = sort;
             this.sortUsers();
@@ -197,8 +194,8 @@ class Search extends React.Component {
                 header="Поиск"
                 searchPlaceholder="Введи имя, тег, почту..."
                 tabs={tabs}
-                activeTab={this.state.activeTab}
-                onTabChange={(tab) => this.setState({ activeTab: tab })}
+                activeTab={activeTab}
+                onTabChange={(tab) => setData("activeTab", tab)}
                 status={this.state.status}
                 onSearchChange={(e) => setData("search", e.target.value)}
                 searchValue={search}
@@ -290,6 +287,7 @@ const mapStateToProps = (state) => {
         search: state.data.search,
         sort: state.data.sort,
         scrollPosition: state.data.scrollPosition,
+        activeTab: state.data.activeTab,
     };
 };
 
