@@ -62,6 +62,12 @@ class Search extends React.Component {
             this.getUsers();
         }
 
+        if(!navigator.onLine) {
+            this.setState({
+                status: "error"
+            });
+        }
+
         window.addEventListener("online", this.updateStatus);
         window.addEventListener("offline", this.updateStatus);
     }
